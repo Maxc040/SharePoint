@@ -8,16 +8,16 @@ import (
 	"net/http"
 	"strings"
 
-	"golang.org/x/oauth2" //
+	"golang.org/x/oauth2" //package die vereist is om de Oauth2.0 te gebruiken
 )
 
 const (
-	clientID        = "9fff275d-98e9-435c-ac69-426203a13c75"                         //Client-ID krijg ik wanneer ik de App-regrstratie maak
-	clientSecret    = "eO98Q~Ks0cASPwqgFQiqp-p1gs9fqOGbNaek-apv"                     //Deze krijg ik wanneer ik een secret-key aanmaak in de App-regristratie
-	redirectURL     = "http://localhost:8080/callback"                               //Deze moet ik aanmaken wanneer ik de App-regrstratie aanmaakte. Deze is default
-	authorizeURL    = "https://twsr4.sharepoint.com/_layouts/15/oauthauthorize.aspx" //Hierdoor krijg ik de Authorisatie-code
-	tokenURL        = "https://twsr4.sharepoint.com/_layouts/15/OAuthToken.aspx"     //Hierdoor krijg ik de Authorisatie-token, hiervoor heb ik wel de code nodig
-	siteCreationURL = "https://twsr4-admin.sharepoint.com/_api/SPSiteManager/create" //Via deze link maakt hij de SharePoint site aan, deze is gekoppeld aan mijn eigen tennant
+	clientID        = "9fff275d-98e9-435c-ac69-426203a13c75"                                                         //Client-ID krijg ik wanneer ik de App-regrstratie maak
+	clientSecret    = "eO98Q~Ks0cASPwqgFQiqp-p1gs9fqOGbNaek-apv"                                                     //Deze krijg ik wanneer ik een secret-key aanmaak in de App-regristratie
+	redirectURL     = "http://localhost:8080/callback"                                                               //Deze moet ik aanmaken wanneer ik de App-regrstratie aanmaakte. Deze is default
+	authorizeURL    = "https://login.microsoftonline.com/d58b4d56-7f52-40be-94cd-e6538315af7f/oauth2/v2.0/authorize" //Hierdoor krijg ik de Authorisatie-code
+	tokenURL        = "https://login.microsoftonline.com/d58b4d56-7f52-40be-94cd-e6538315af7f/oauth2/v2.0/token"     //Hierdoor krijg ik de Authorisatie-token, hiervoor heb ik wel de code nodig
+	siteCreationURL = "https://twsr4-admin.sharepoint.com/_api/SPSiteManager/create"                                 //Via deze link maakt hij de SharePoint site aan, deze is gekoppeld aan mijn eigen tennant
 )
 
 // in dit stukje zal ik met de informatie hierboven de oauth2 instellen
@@ -33,7 +33,7 @@ func main() {
 		Scopes:      []string{"AllSites.Manage"}, //hier geef ik alle rechten die overeen moeten komen met diegene die ik geef in de app-regristratie
 	}
 
-	// Start de autorisatiecode-stroom
+	// Hier start ik de autorisatie
 	authURL := config.AuthCodeURL("state", oauth2.AccessTypeOffline)
 	fmt.Printf("Open deze URL in je browser om in te loggen: \n%s\n", authURL)
 
@@ -44,9 +44,6 @@ func main() {
 		if err != nil {
 			log.Fatal("Fout bij het uitwisselen van autorisatiecode: ", err)
 		}
-
-		// Hier moet ik de gekregen code geven, hierna zal ik een Token moeten krijgen
-		fmt.Println("hier komt de authorisatiecode die ik krijg wanneer ik de code run:", code)
 
 		// Creëer een nieuwe SharePoint-site
 		err = createSite(code)
@@ -64,7 +61,7 @@ func main() {
 func createSite(authorizationCode string) error {
 	client := &http.Client{}
 
-	siteURL := "https://twsr4.sharepoint.com/sites/your-site" //mijn tennant zijn SharePoint-link
+	siteURL := "https://twsr4.sharepoint.com/sites/your-site"
 
 	// Aanvraag maken voor het maken van een nieuwe SharePoint-site
 	req, err := http.NewRequest("POST", siteCreationURL, nil)
