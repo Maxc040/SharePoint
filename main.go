@@ -61,7 +61,7 @@ func main() {
 func createSite(authorizationCode string) error {
 	client := &http.Client{}
 
-	siteURL := "https://twsr4.sharepoint.com/sites/your-site"
+	siteURL := "https://twsr4.sharepoint.com/sites/my-new-site"
 
 	// Aanvraag maken voor het maken van een nieuwe SharePoint-site
 	req, err := http.NewRequest("POST", siteCreationURL, nil)
